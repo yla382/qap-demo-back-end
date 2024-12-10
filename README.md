@@ -87,3 +87,75 @@ graph TD
     A4 --> B1
 
 ```
+
+## Project Setup Instructions
+
+### Prerequisites
+1. PHP (version 8.0 or higher)
+2. Composer (dependency manager for PHP)
+3. Node.js (for front-end dependencies, version 16+ recommended)
+4. Git (to clone the repository)
+
+### 1. Clone the Repository
+Backend
+```
+git clone https://github.com/yla382/qap-demo-back-end.git
+```
+
+Frontend
+```
+git clone https://github.com/yla382/qap-demo-front-end.git
+```
+
+### 2. Install Dependencies
+Backend
+```
+composer install
+```
+
+Frontend
+```
+npm install
+```
+
+### 3. Configure Xero API
+1. Create Xero account - https://developer.xero.com/
+2. Create new web app with following configurations
+   - Company or application URL: https://www.xero.com
+   - Redirect URIs: http://localhost:8000/xero/redirect
+   - Generate secret and copy
+
+### 4. Configure Environment Variable (Backend only)
+
+Edit the ``.env`` file to configure the necessary environment variables such as database connection details and API keys. For example:
+```
+XERO_CLIENT_ID=your-client-id
+XERO_CLIENT_SECRET=your-client-secret
+XERO_REDIRECT_URI=http://localhost:8000/xero/redirect
+XERO_AUTH_URL=https://login.xero.com/identity/connect/authorize
+XERO_TOKEN_URL=https://identity.xero.com/connect/token
+XERO_USER_URI=https://api.xero.com/api.xro/2.0/Users
+```
+
+Update ``php.ini`` to specify CACert
+```
+[curl]
+; A default value for the CURLOPT_CAINFO option. This is required to be an
+; absolute path.
+curl.cainfo = C:\Users\yoonh\Desktop\QAP - Demo\cacert.pem
+```
+
+### 5. Run the Project Locally
+Backend
+```
+php -S localhost:8000 -t webroot
+```
+
+Frontend
+```
+npm run
+```
+
+### 6. Access the Application
+- Backend: http://localhost:8000
+- Frontend: http://localhost:3001
