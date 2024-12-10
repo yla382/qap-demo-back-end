@@ -1,0 +1,11 @@
+.idea
+composer.phar
+/vendor
+/config/settings-local.php
+/data
+.DS_Store
+.AppleDouble
+.LSOverride
+
+.scannerwork
+.phpunit.result.cache
