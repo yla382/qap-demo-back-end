@@ -3,9 +3,10 @@ composer.phar
 /vendor
 /config/settings-local.php
 /data
+/logs/app.log
 .DS_Store
 .AppleDouble
 .LSOverride
-
+.env
 .scannerwork
 .phpunit.result.cache

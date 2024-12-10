@@ -7,6 +7,8 @@ namespace App\UserInterface;
 use Psr\Http\Message\ResponseInterface;
 use Nyholm\Psr7\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Monolog\Logger;
+use App\Library\LoggerHandler;
 
 /**
  * WelcomeController
@@ -16,11 +18,14 @@ use Symfony\Component\Routing\Attribute\Route;
 final class VendorApiController
 {
     private string $dataDir;
+    private $logger;
 
     public function __construct()
     {
         // Directory where the JSON files are stored
         $this->dataDir = __DIR__ . '/../../data/';
+
+        $this->logger = LoggerHandler::createLogger();
     }
 
     #[Route(path: '/vendors', name: 'vendors')]
@@ -29,6 +34,8 @@ final class VendorApiController
         $vendorsFile = $this->dataDir . 'vendors.json';
 
         if (!file_exists($vendorsFile)) {
+            $this->logger->error('No accounts.json exists to extract the data');
+            
             return new Response(404, 
                 [
                     'Content-Type' => 'application/json',

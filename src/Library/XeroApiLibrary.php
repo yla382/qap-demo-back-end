@@ -6,11 +6,14 @@ use League\OAuth2\Client\Provider\GenericProvider;
 use XeroAPI\XeroPHP\Api\AccountingApi;
 use XeroAPI\XeroPHP\Configuration;
 use GuzzleHttp\Client;
+use Monolog\Logger;
+use App\Library\LoggerHandler;
 
 class XeroApiLibrary
 {
     private $provider;
     private $accountingApi;
+    private $logger;
 
     public function __construct()
     {
@@ -26,6 +29,8 @@ class XeroApiLibrary
         
         // Initialize the Accounting API instance
         $this->accountingApi = new AccountingApi(new Client(), $this->getConfig());
+
+        $this->logger = LoggerHandler::createLogger();
     }
 
     // Helper function to get the OAuth2 configuration
@@ -33,6 +38,7 @@ class XeroApiLibrary
     {
         $accessToken = $this->getAccessToken();
         if (!$accessToken) {
+            $this->logger->error('Access token is not available');
             throw new \Exception('Access token is not available');
         }
 
@@ -49,6 +55,7 @@ class XeroApiLibrary
         // Check if access token is expired and refresh it if needed
         $expiry = $_SESSION['xero_access_token_expires'] ?? 0;
         if (time() >= $expiry) {
+            $this->logger->info('Token expired. Getting refresh token');
             return $this->refreshAccessToken();
         }
 
@@ -68,6 +75,7 @@ class XeroApiLibrary
             $_SESSION['xero_access_token_expires'] = time() + $accessToken->getExpires();
             return $_SESSION['xero_access_token'];
         } catch (\Exception $e) {
+            $this->logger->error('Error refreshing access token: ' . $e->getMessage(), ['exception' => $e]);
             return null;
         }
     }
@@ -90,6 +98,7 @@ class XeroApiLibrary
             $accounts = $result->getAccounts();
             $this->storeDataToJsonFile('accounts.json', $accounts);
         } catch (\Exception $e) {
+            $this->logger->error('Error fetching accounts: ' . $e->getMessage(), ['exception' => $e]);
             throw new \RuntimeException('Error fetching accounts: ' . $e->getMessage());
         }
 
@@ -140,6 +149,7 @@ class XeroApiLibrary
             
             $this->storeDataToJsonFile('vendors.json', $vendors);
         } catch (\Exception $e) {
+            $this->logger->error('Error fetching vendors: ' . $e->getMessage(), ['exception' => $e]);
             throw new \RuntimeException('Error fetching vendors: ' . $e->getMessage());
         }
 
